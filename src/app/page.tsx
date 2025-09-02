@@ -1,102 +1,287 @@
-import Image from "next/image";
+'use client';
+
+import { authClient } from '@/lib/auth-client';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
 
 export default function Home() {
-  return (
-    <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="font-mono list-inside list-decimal text-sm/6 text-center sm:text-left">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] font-mono font-semibold px-1 py-0.5 rounded">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+  const { data: session, isPending } = authClient.useSession();
+  const router = useRouter();
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+  useEffect(() => {
+    if (!isPending && session) {
+      router.push('/dashboard');
+    }
+  }, [session, isPending, router]);
+
+  if (isPending) {
+    return (
+      <div className="min-h-screen bg-black flex items-center justify-center">
+        <div className="flex items-center space-x-2">
+          <div className="w-2 h-2 bg-white rounded-full animate-pulse"></div>
+          <div
+            className="w-2 h-2 bg-white rounded-full animate-pulse"
+            style={{ animationDelay: '0.1s' }}
+          ></div>
+          <div
+            className="w-2 h-2 bg-white rounded-full animate-pulse"
+            style={{ animationDelay: '0.2s' }}
+          ></div>
+        </div>
+      </div>
+    );
+  }
+
+  if (session) {
+    return null;
+  }
+
+  return (
+    <div className="min-h-screen bg-black text-white">
+      {/* Navigation */}
+      <nav className="border-b border-neutral-800">
+        <div className="max-w-7xl mx-auto px-6 lg:px-8">
+          <div className="flex justify-between items-center h-16">
+            <div className="flex items-center space-x-2">
+              <div className="w-6 h-6 bg-white rounded-sm flex items-center justify-center">
+                <div className="w-3 h-3 bg-black rounded-sm"></div>
+              </div>
+              <span className="font-semibold text-lg">AuthMA</span>
+            </div>
+            <Link
+              href="/login"
+              className="text-sm text-neutral-400 hover:text-white transition-colors"
+            >
+              Sign In
+            </Link>
+          </div>
+        </div>
+      </nav>
+
+      {/* Hero Section */}
+      <main className="max-w-7xl mx-auto px-6 lg:px-8">
+        <div className="pt-24 pb-16 text-center">
+          <div className="space-y-8">
+            <div className="space-y-4">
+              <h1 className="text-5xl lg:text-7xl font-bold tracking-tight">
+                Authentication
+                <br />
+                <span className="bg-gradient-to-r from-neutral-200 to-neutral-400 bg-clip-text text-transparent">
+                  without complexity
+                </span>
+              </h1>
+              <p className="text-xl text-neutral-400 max-w-2xl mx-auto leading-relaxed">
+                Implement secure authentication in minutes. Built for developers
+                who value simplicity.
+              </p>
+            </div>
+
+            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+              <Link
+                href="/login"
+                className="bg-white text-black px-8 py-3 rounded-lg font-medium hover:bg-neutral-200 transition-colors inline-flex items-center"
+              >
+                Get Started
+                <svg
+                  className="ml-2 w-4 h-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M9 5l7 7-7 7"
+                  />
+                </svg>
+              </Link>
+              <button className="text-neutral-400 hover:text-white transition-colors px-4 py-3 inline-flex items-center">
+                View docs
+                <svg
+                  className="ml-2 w-4 h-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
+                  />
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Features Grid */}
+        <div className="py-24 border-t border-neutral-800">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div className="group">
+              <div className="border border-neutral-800 rounded-xl p-8 h-full hover:border-neutral-700 transition-colors">
+                <div className="w-10 h-10 bg-neutral-900 border border-neutral-800 rounded-lg flex items-center justify-center mb-6">
+                  <svg
+                    className="w-5 h-5 text-neutral-400"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
+                    />
+                  </svg>
+                </div>
+                <h3 className="text-xl font-semibold mb-3">Security First</h3>
+                <p className="text-neutral-400 leading-relaxed">
+                  Robust implementation with security best practices. Password
+                  hashing, secure tokens, and CSRF protection included.
+                </p>
+              </div>
+            </div>
+
+            <div className="group">
+              <div className="border border-neutral-800 rounded-xl p-8 h-full hover:border-neutral-700 transition-colors">
+                <div className="w-10 h-10 bg-neutral-900 border border-neutral-800 rounded-lg flex items-center justify-center mb-6">
+                  <svg
+                    className="w-5 h-5 text-neutral-400"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M13 10V3L4 14h7v7l9-11h-7z"
+                    />
+                  </svg>
+                </div>
+                <h3 className="text-xl font-semibold mb-3">Quick Setup</h3>
+                <p className="text-neutral-400 leading-relaxed">
+                  From zero to production in minutes. No complex configurations,
+                  no unnecessary dependencies. Just the essentials.
+                </p>
+              </div>
+            </div>
+
+            <div className="group">
+              <div className="border border-neutral-800 rounded-xl p-8 h-full hover:border-neutral-700 transition-colors">
+                <div className="w-10 h-10 bg-neutral-900 border border-neutral-800 rounded-lg flex items-center justify-center mb-6">
+                  <svg
+                    className="w-5 h-5 text-neutral-400"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
+                    />
+                  </svg>
+                </div>
+                <h3 className="text-xl font-semibold mb-3">
+                  Smooth Experience
+                </h3>
+                <p className="text-neutral-400 leading-relaxed">
+                  Automatic session management, smart redirects, and optimized
+                  loading states for perfect UX.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Steps Section */}
+        <div className="py-24 border-t border-neutral-800">
+          <div className="max-w-3xl mx-auto">
+            <div className="text-center mb-16">
+              <h2 className="text-3xl font-bold mb-4">Three steps. Done.</h2>
+              <p className="text-neutral-400 text-lg">
+                You don&apos;t need to be a security expert to implement robust
+                authentication.
+              </p>
+            </div>
+
+            <div className="space-y-12">
+              <div className="flex items-start space-x-6">
+                <div className="flex-shrink-0 w-8 h-8 bg-neutral-900 border border-neutral-800 rounded-full flex items-center justify-center">
+                  <span className="text-sm font-semibold">1</span>
+                </div>
+                <div>
+                  <h3 className="text-lg font-semibold mb-2">
+                    Create your account
+                  </h3>
+                  <p className="text-neutral-400">
+                    Sign up with your email and a secure password. The system
+                    handles the rest.
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-start space-x-6">
+                <div className="flex-shrink-0 w-8 h-8 bg-neutral-900 border border-neutral-800 rounded-full flex items-center justify-center">
+                  <span className="text-sm font-semibold">2</span>
+                </div>
+                <div>
+                  <h3 className="text-lg font-semibold mb-2">Sign in</h3>
+                  <p className="text-neutral-400">
+                    Access with your credentials. Sessions remain secure
+                    automatically.
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-start space-x-6">
+                <div className="flex-shrink-0 w-8 h-8 bg-neutral-900 border border-neutral-800 rounded-full flex items-center justify-center">
+                  <span className="text-sm font-semibold">3</span>
+                </div>
+                <div>
+                  <h3 className="text-lg font-semibold mb-2">
+                    Access dashboard
+                  </h3>
+                  <p className="text-neutral-400">
+                    Your protected personal area awaits. Simple, secure,
+                    functional.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
+
+      {/* Footer */}
+      <footer className="border-t border-neutral-800 mt-24">
+        <div className="max-w-7xl mx-auto px-6 lg:px-8 py-12">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-2">
+              <div className="w-5 h-5 bg-white rounded-sm flex items-center justify-center">
+                <div className="w-2.5 h-2.5 bg-black rounded-sm"></div>
+              </div>
+              <span className="font-medium">AuthMA</span>
+            </div>
+            <p className="text-sm text-neutral-400">
+              Built with ♥ by{' '}
+              <a
+                href="https://creativoma.com"
+                className="underline hover:text-white"
+              >
+                CREATIVOMA
+              </a>
+            </p>
+            <p className="text-sm text-neutral-400">
+              &copy; {new Date().getFullYear()} AuthMA. All rights reserved.
+            </p>
+          </div>
+        </div>
       </footer>
     </div>
   );
